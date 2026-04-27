@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 from database import init_db
-from routers import garmin, activities, journal, dashboard, strength, nutrition, alerts
+from routers import garmin, activities, journal, dashboard, strength, nutrition, alerts, compare
 from services.alert_engine import run_alert_engine
 
 load_dotenv()
@@ -43,6 +43,7 @@ app.include_router(dashboard.router)
 app.include_router(strength.router)
 app.include_router(nutrition.router)
 app.include_router(alerts.router)
+app.include_router(compare.router)
 
 
 @app.on_event("startup")

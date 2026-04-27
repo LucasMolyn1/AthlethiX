@@ -107,5 +107,11 @@ const API = (() => {
     markAlertRead: (id) => request(`/alerts/${id}/read`, { method: "PUT" }),
     deleteAlert:   (id) => request(`/alerts/${id}`,      { method: "DELETE" }),
     clearReadAlerts: ()  => request("/alerts",            { method: "DELETE" }),
+
+    // --- Comparaison ---
+    comparePeriods: (aFrom, aTo, bFrom, bTo) =>
+      request(`/compare/periods?a_from=${aFrom}&a_to=${aTo}&b_from=${bFrom}&b_to=${bTo}`),
+    compareExercises: (exAId, exBId) =>
+      request(`/compare/exercises?exercise_a_id=${exAId}&exercise_b_id=${exBId}`),
   };
 })();

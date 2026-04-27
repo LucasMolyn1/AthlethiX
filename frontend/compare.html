@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AthletiX — Comparaison</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">AthletiX</div>
+    <nav>
+      <a href="index.html"><span class="icon">📊</span> Dashboard</a>
+      <a href="history.html"><span class="icon">📋</span> Historique</a>
+      <a href="journal.html"><span class="icon">📝</span> Journal</a>
+      <a href="strength.html"><span class="icon">💪</span> Musculation</a>
+      <a href="nutrition.html"><span class="icon">🥗</span> Nutrition</a>
+      <a href="compare.html" class="active"><span class="icon">📈</span> Comparaison</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <h1>Comparaison</h1>
+    </div>
+
+    <!-- Onglets -->
+    <div style="display:flex;gap:8px;margin-bottom:20px">
+      <button id="btn-tab-periods"
+        onclick="showTab('periods')"
+        style="padding:8px 20px;border-radius:7px;border:1px solid;cursor:pointer;font-size:.88rem;font-weight:500;transition:all .15s">
+        Périodes
+      </button>
+      <button id="btn-tab-exercises"
+        onclick="showTab('exercises')"
+        style="padding:8px 20px;border-radius:7px;border:1px solid;cursor:pointer;font-size:.88rem;font-weight:500;transition:all .15s">
+        Exercices
+      </button>
+    </div>
+
+    <!-- ── Tab Périodes ── -->
+    <div id="tab-periods">
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-title">Sélection des périodes</div>
+        <div class="grid-2" style="gap:20px">
+          <div>
+            <div style="color:#4f8ef7;font-weight:600;font-size:.85rem;margin-bottom:8px">Période A</div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <input type="date" id="a-from"
+                style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:7px;font-size:.85rem">
+              <span style="color:var(--text-muted)">→</span>
+              <input type="date" id="a-to"
+                style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:7px;font-size:.85rem">
+            </div>
+          </div>
+          <div>
+            <div style="color:#34d399;font-weight:600;font-size:.85rem;margin-bottom:8px">Période B</div>
+            <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+              <input type="date" id="b-from"
+                style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:7px;font-size:.85rem">
+              <span style="color:var(--text-muted)">→</span>
+              <input type="date" id="b-to"
+                style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:7px;font-size:.85rem">
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:16px">
+          <button class="btn btn-primary" onclick="comparePeriods()">Comparer</button>
+        </div>
+      </div>
+      <div id="periods-results"></div>
+    </div>
+
+    <!-- ── Tab Exercices ── -->
+    <div id="tab-exercises" style="display:none">
+      <div class="card" style="margin-bottom:20px">
+        <div class="card-title">Sélection des exercices</div>
+        <div class="grid-2" style="gap:20px">
+          <div>
+            <div style="color:#4f8ef7;font-weight:600;font-size:.85rem;margin-bottom:8px">Exercice A</div>
+            <select id="ex-a"
+              style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:7px;font-size:.9rem">
+              <option value="">— Choisir —</option>
+            </select>
+          </div>
+          <div>
+            <div style="color:#34d399;font-weight:600;font-size:.85rem;margin-bottom:8px">Exercice B</div>
+            <select id="ex-b"
+              style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:7px;font-size:.9rem">
+              <option value="">— Choisir —</option>
+            </select>
+          </div>
+        </div>
+        <div style="margin-top:16px">
+          <button class="btn btn-primary" onclick="compareExercises()">Comparer</button>
+        </div>
+      </div>
+      <div id="exercises-results"></div>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+<script src="js/vendor/chart.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/alerts.js"></script>
+<script src="js/compare.js"></script>
+</body>
+</html>
