@@ -24,7 +24,7 @@
 
 ---
 
-### V2 — Modules avancés (en cours)
+### V2 — Modules avancés (complète)
 
 | Étape | Description | Statut |
 |-------|-------------|--------|
@@ -32,10 +32,12 @@
 | Étape 2 | Backend musculation — `routers/strength.py` (8 endpoints) | ✅ DONE |
 | Étape 3 | Frontend musculation — 3 pages + nav mise à jour | ✅ DONE |
 | Étape 4 | Module nutrition — backend + frontend | ✅ DONE |
-| Étape 5 | Moteur d'alertes — `services/alert_engine.py` + `routers/alerts.py` | 🔄 EN COURS |
-| Étape 6 | Module comparaison — `routers/compare.py` + `compare.html` | ⏳ À FAIRE |
-| Étape 7 | Dashboard V2 — widget nutrition, bannière alertes, badge | ⏳ À FAIRE |
-| Étape 8 | Clôture V2 — docs, CHANGELOG, tag git v2.0.0 | ⏳ À FAIRE |
+| Étape 5 | Moteur d'alertes — `services/alert_engine.py` + `routers/alerts.py` | ✅ DONE |
+| Étape 6 | Module comparaison — `routers/compare.py` + `compare.html` | ✅ DONE |
+| Étape 7 | Dashboard V2 — widgets nutrition/muscu + badge alertes nav | ✅ DONE |
+| Étape 8 | Clôture V2 — docs, CHANGELOG, tag git v2.0.0 | ✅ DONE |
+
+> **V2 validée et taggée v2.0.0 le 2026-04-27.**
 
 ---
 
@@ -112,55 +114,78 @@ Navigation "🥗 Nutrition" ajoutée dans les 7 pages existantes.
 
 ---
 
-### Étape 5 — Moteur d'alertes 🔄
+### Étape 5 — Moteur d'alertes ✅
 
 **Backend** : `services/alert_engine.py`
-- Fonction `run_alert_engine()` : analyse la DB et génère des alertes dans la table `alerts`
-- Règles prévues :
-  - Surcharge hebdomadaire (charge > 120% de la semaine précédente) → `danger`
-  - Repos insuffisant (3 séances consécutives sans jour off) → `warning`
-  - Record personnel battu (1RM) → `success`
-  - Rappel hydratation (moyenne 7j < 1.5L) → `info`
-- Appelé automatiquement : au démarrage + à chaque sync Garmin
+- `run_alert_engine()` : analyse la DB et génère des alertes dans la table `alerts`
+- Règles implémentées :
+  - Surcharge hebdomadaire (volume cardio > 150% semaine précédente) → `danger`
+  - Repos insuffisant (≥ 5 jours actifs sur 7 glissants) → `warning`
+  - Record personnel 1RM battu (Epley, par exercice) → `success`
+  - Rappel hydratation (moyenne 7j < 1.5L, ≥ 3 points de données) → `info`
+- `_already_open()` : idempotent, évite les doublons
+- `_close_alert()` : résout automatiquement les alertes dont la condition cesse
+- Appelé au démarrage + à chaque sync Garmin
 
 `routers/alerts.py` — prefix `/api/alerts`
-- `GET /api/alerts` — liste alertes non lues (ou toutes)
-- `PUT /api/alerts/{id}/read` — marquer comme lue
-- `DELETE /api/alerts/{id}` — supprimer
 
-**Frontend** : bannière dans toutes les pages + section dans dashboard V2
+| Méthode | Route | Description |
+|---------|-------|-------------|
+| GET | `/alerts` | Liste alertes (param `unread_only`, défaut `true`) |
+| PUT | `/alerts/{id}/read` | Marquer comme lue |
+| DELETE | `/alerts/{id}` | Supprimer une alerte |
+| DELETE | `/alerts` | Supprimer toutes les alertes lues |
+
+**Frontend** : `js/alerts.js` partagé entre toutes les pages
+- Bannière colorée en haut du `<main>` selon niveau (danger/warning/info/success)
+- Bouton ✕ par alerte → `dismissAlert(id)` → `markAlertRead` puis suppression DOM
+- Badge rouge dans `.sidebar-logo` avec le nombre d'alertes non lues
+- Badge mis à jour dynamiquement au dismiss, retiré quand count = 0
 
 ---
 
-### Étape 6 — Module comparaison ⏳
+### Étape 6 — Module comparaison ✅
 
 `routers/compare.py` — prefix `/api/compare`
-- Comparaison de deux périodes (semaine / mois) sur volume, durée, fréquence
-- Comparaison de deux exercices côte à côte (1RM, volume, progression)
+
+| Méthode | Route | Description |
+|---------|-------|-------------|
+| GET | `/periods` | Stats deux périodes : activités, durée, distance, séances muscu, séries |
+| GET | `/exercises` | Comparaison deux exercices : PR, best 1RM, historique |
+
+`_period_stats()` : calcule `active_days` comme union des jours avec activité OU séance muscu.
+Distance convertie mètres → km.
 
 `compare.html` + `compare.js` :
-- Sélecteurs de périodes ou d'exercices
-- Graphiques Chart.js côte à côte
-- Tableau de métriques comparatives
+- Deux onglets (Périodes / Exercices) avec `showTab()`
+- Périodes : sélecteurs de dates A (bleue) et B (verte), tableau comparatif avec couleur
+  sur la meilleure valeur, bar chart Chart.js groupé (4 métriques × 2 périodes)
+- Exercices : deux selects (remplis depuis `/api/strength/exercises`), cards PR + stats,
+  line chart comparatif 1RM (union de dates, `spanGaps: true`, `null` pour dates manquantes)
 
 ---
 
-### Étape 7 — Dashboard V2 ⏳
+### Étape 7 — Dashboard V2 ✅
 
-Modifications de `index.html` + `dashboard.js` :
-- Widget "Nutrition du jour" (hydratation + score)
-- Bannière alertes non lues avec lien vers détail
-- Badge nombre d'alertes non lues dans la nav
+`GET /api/dashboard/extras` (ajout dans `dashboard.py`) :
+- Nutrition semaine : `days_logged`, `avg_hydration`, `avg_score`
+- Musculation semaine : `sessions_count`, `total_sets`, `total_volume` (kg)
+
+`index.html` : nouvelle ligne `grid-2` sous les graphiques existants :
+- Widget **Nutrition** — hydratation moyenne (L) + score moyen / 10
+- Widget **Musculation** — séances + volume soulevé (kg ou tonnes si ≥ 1000 kg)
+
+`dashboard.js` : `loadExtras()` appelé dans `DOMContentLoaded`, `renderNutritionWidget()` +
+`renderStrengthWidget()` injectent dans `#widget-nutrition` et `#widget-strength`.
 
 ---
 
-### Étape 8 — Clôture V2 ⏳
+### Étape 8 — Clôture V2 ✅
 
 - `WALKTHROUGH.md` : mis à jour avec toute la V2
-- `IMPLEMENTATION_PLAN.md` : audit final V2
+- `IMPLEMENTATION_PLAN.md` : audit final, tous les statuts à ✅ DONE
 - `CHANGELOG.md` : entrée `[v2.0.0]` complète
 - Tag git `v2.0.0`
-- Commit : `chore: close V2 — alertes, comparaison, dashboard V2`
 
 ---
 
@@ -191,14 +216,14 @@ Internet
     │                               activity.html   journal.html
     │                               strength.html   strength_session.html
     │                               exercise.html   nutrition.html
-    │                               compare.html    (étape 6)
+    │                               compare.html
     │                               css/style.css
     │                               js/api.js       js/dashboard.js
     │                               js/history.js   js/activity.js
     │                               js/journal.js   js/strength.js
     │                               js/strength_session.js
     │                               js/exercise.js  js/nutrition.js
-    │                               js/compare.js   (étape 6)
+    │                               js/compare.js   js/alerts.js
     │
     └─ /api/* ────────────────────► 127.0.0.1:8000 (FastAPI / Uvicorn)
                                         │
@@ -208,8 +233,8 @@ Internet
                                         ├── routers/dashboard.py
                                         ├── routers/strength.py     ← V2
                                         ├── routers/nutrition.py    ← V2
-                                        ├── routers/alerts.py       ← V2 (étape 5)
-                                        └── routers/compare.py      ← V2 (étape 6)
+                                        ├── routers/alerts.py       ← V2
+                                        └── routers/compare.py      ← V2
                                                     │
                                                     ▼
                                         SQLite : athletix.db
@@ -226,7 +251,7 @@ Internet
                                         ─────────────────────────
                                                     │
                                         services/garmin_sync.py
-                                        services/alert_engine.py  ← V2 (étape 5)
+                                        services/alert_engine.py  ← V2
                                                     │
                                                     ▼
                                         [Garmin Connect API]

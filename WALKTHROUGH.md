@@ -11,10 +11,11 @@ AthletiX est une application web auto-hébergée qui :
 1. Se connecte à ton compte Garmin Connect et récupère tes activités sportives
 2. Les stocke dans une base de données locale (SQLite)
 3. Te permet de les consulter via un tableau de bord dans ton navigateur
-4. Te permet d'ajouter un journal personnel à chaque séance (V1)
-5. Suit tes séances de musculation avec progression 1RM (V2)
-6. Journal nutritionnel quotidien : hydratation, repas, compléments (V2)
-7. Génère des alertes intelligentes sur ta charge d'entraînement (V2)
+4. Te permet d'ajouter un journal personnel à chaque séance
+5. Suit tes séances de musculation avec progression 1RM (formule Epley)
+6. Journal nutritionnel quotidien : hydratation, repas, compléments, score
+7. Génère des alertes intelligentes sur ta charge d'entraînement
+8. Compare deux périodes ou deux exercices côte à côte avec graphiques
 
 L'application tourne entièrement sur ta VM Debian. Aucune donnée ne sort
 vers un service cloud externe (hors Garmin Connect qui est la source).
@@ -35,11 +36,12 @@ Ton navigateur
       ├── /* ──────────────────────► /var/www/athletix/
       │       index.html      history.html    activity.html
       │       journal.html    strength.html   strength_session.html
-      │       exercise.html   nutrition.html  compare.html (V2)
+      │       exercise.html   nutrition.html  compare.html
       │       css/style.css
-      │       js/api.js  js/dashboard.js  js/history.js
-      │       js/activity.js  js/journal.js  js/strength.js
-      │       js/strength_session.js  js/exercise.js  js/nutrition.js
+      │       js/api.js       js/alerts.js    js/dashboard.js
+      │       js/history.js   js/activity.js  js/journal.js
+      │       js/strength.js  js/strength_session.js
+      │       js/exercise.js  js/nutrition.js js/compare.js
       │
       └── /api/* ──────────────────► 127.0.0.1:8000 (FastAPI/Uvicorn)
                      │
@@ -102,11 +104,17 @@ Toutes les données viennent de l'API FastAPI, jamais directement de la base.
 | Séance | `strength_session.js` | Formulaire séance (métadonnées + séries dynamiques), create/update/delete |
 | Exercice | `exercise.js` | Fiche exercice : courbe 1RM Chart.js, PR, historique |
 | Nutrition | `nutrition.js` | Journal quotidien : navigation ←/→, formulaire, historique récent |
+| Comparaison | `compare.js` | Deux onglets : comparaison périodes (bar chart) + exercices (line chart) |
 
-`js/api.js` centralise tous les appels `fetch()` vers le backend. Chaque page importe
-ce fichier. Les erreurs HTTP exposent `err.status` pour distinguer 404 des vraies erreurs.
+### Fichiers JS partagés
 
-`js/vendor/chart.min.js` — Chart.js 4.4.4 embarqué localement.
+`js/api.js` — centralise tous les appels `fetch()` vers le backend. Les erreurs HTTP
+exposent `err.status` pour distinguer 404 des vraies erreurs réseau.
+
+`js/alerts.js` — chargé sur toutes les pages. Injecte la bannière d'alertes non lues
+en haut du `<main>`, et un badge rouge dans le logo sidebar avec le compteur.
+
+`js/vendor/chart.min.js` — Chart.js 4.4.4 embarqué localement (pas de CDN).
 
 ---
 
@@ -130,9 +138,10 @@ Configure SQLite et crée les tables. Deux blocs `executescript` distincts :
 4. Insère uniquement les activités absentes (`garmin_id` UNIQUE)
 5. Enregistre le résultat dans `sync_log`
 
-### `services/alert_engine.py` (V2 — étape 5)
+### `services/alert_engine.py` (V2)
 Analyse la DB et génère des alertes dans la table `alerts`. Appelé au démarrage
-et à chaque sync Garmin.
+et à chaque sync Garmin. 4 règles : surcharge cardio, repos insuffisant, PR 1RM, hydratation basse.
+Idempotent : `_already_open()` évite les doublons, `_close_alert()` résout les conditions passées.
 
 ### `routers/` — détail des endpoints
 
@@ -154,6 +163,7 @@ et à chaque sync Garmin.
 - `GET /api/dashboard/fitness` — courbe de charge 30 jours
 - `GET /api/dashboard/recent` — 5 dernières activités
 - `GET /api/dashboard/sync-status` — date et statut de la dernière sync
+- `GET /api/dashboard/extras` — (V2) avg hydratation + score nutrition, séances + volume muscu semaine
 
 **V2 : `strength.py`**
 - `GET /api/strength/sessions` — liste paginée, filtres dates, `sets_count` agrégé
@@ -172,10 +182,15 @@ et à chaque sync Garmin.
 - `PUT /api/nutrition/logs/{date}` — remplace intégralement
 - `DELETE /api/nutrition/logs/{date}` — supprime
 
-**V2 : `alerts.py`** (étape 5 — à venir)
-- `GET /api/alerts` — alertes non lues
+**V2 : `alerts.py`**
+- `GET /api/alerts` — alertes non lues (param `unread_only`, défaut `true`)
 - `PUT /api/alerts/{id}/read` — marquer lue
-- `DELETE /api/alerts/{id}` — supprimer
+- `DELETE /api/alerts/{id}` — supprimer une alerte
+- `DELETE /api/alerts` — supprimer toutes les alertes déjà lues
+
+**V2 : `compare.py`**
+- `GET /api/compare/periods` — stats deux périodes (activités, durée, distance, séances muscu)
+- `GET /api/compare/exercises` — comparaison deux exercices (PR, best 1RM, historique sessions)
 
 La documentation interactive est accessible à `http://192.168.1.26/api/docs`.
 
@@ -269,12 +284,11 @@ Jamais commité dans Git (listé dans `.gitignore`). Contient :
 │   ├── main.py
 │   ├── database.py
 │   ├── routers/
-│   │   ├── garmin.py   activities.py  journal.py  dashboard.py
-│   │   ├── strength.py   nutrition.py              ← V2
-│   │   └── alerts.py     compare.py                ← V2 (à venir)
+│   │   ├── garmin.py    activities.py  journal.py  dashboard.py
+│   │   ├── strength.py  nutrition.py  alerts.py   compare.py   ← V2
 │   ├── services/
 │   │   ├── garmin_sync.py
-│   │   └── alert_engine.py                         ← V2 (à venir)
+│   │   └── alert_engine.py                                      ← V2
 │   └── .env
 ├── venv/                         ← environnement Python 3.13
 └── requirements.txt
@@ -293,7 +307,7 @@ Jamais commité dans Git (listé dans `.gitignore`). Contient :
 sudo systemctl status athletix
 
 # Logs en temps réel
-sudo journalctl -u athletix -f
+journalctl -u athletix -f
 
 # Redémarrer après modification de code backend
 sudo systemctl restart athletix
@@ -302,6 +316,11 @@ sudo systemctl restart athletix
 curl http://127.0.0.1:8000/api/health
 curl http://127.0.0.1:8000/api/strength/exercises
 curl http://127.0.0.1:8000/api/nutrition/logs
+curl http://127.0.0.1:8000/api/alerts
+curl http://127.0.0.1:8000/api/dashboard/extras
+
+# Comparaison de périodes
+curl "http://127.0.0.1:8000/api/compare/periods?a_from=2026-04-20&a_to=2026-04-27&b_from=2026-04-13&b_to=2026-04-19"
 
 # Déclencher une sync Garmin manuellement
 curl -X POST http://127.0.0.1:8000/api/garmin/sync \

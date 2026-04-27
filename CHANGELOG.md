@@ -1,14 +1,33 @@
 # CHANGELOG — AthletiX
 
-## [v2.0.0-dev] - 2026-04-27 (en cours)
+## [v2.0.0] - 2026-04-27
 
-### En cours / À venir
-- Étape 5 : Moteur d'alertes — `services/alert_engine.py` + `routers/alerts.py`
-- Étape 6 : Module comparaison — `routers/compare.py` + `compare.html`
-- Étape 7 : Dashboard V2 — widget nutrition, bannière alertes
-- Étape 8 : Clôture V2 — tag `v2.0.0`, docs finales
+### Added
 
-### Added (Étapes 1–4)
+**Étape 7 — Dashboard V2**
+- `GET /api/dashboard/extras` : stats nutrition + musculation de la semaine courante
+  (avg hydratation, avg score nutrition, sessions_count, total_sets, volume kg)
+- `index.html` : deux nouveaux widgets "Nutrition — cette semaine" et "Musculation — cette semaine"
+- `dashboard.js` : `loadExtras()` + `renderNutritionWidget()` + `renderStrengthWidget()`
+- `alerts.js` : badge rouge dans `.sidebar-logo` affichant le nombre d'alertes non lues ;
+  mise à jour dynamique au dismiss, retiré automatiquement quand count = 0
+
+**Étape 6 — Module comparaison**
+- `routers/compare.py` : `GET /api/compare/periods` (stats deux périodes) et
+  `GET /api/compare/exercises` (comparaison deux exercices côte à côte)
+- `compare.html` : deux onglets Périodes / Exercices, sélecteurs de dates et d'exercices
+- `compare.js` : tableau comparatif coloré (valeur sup = vert), bar chart périodes,
+  line chart 1RM exercices avec union de dates et `spanGaps: true`
+- `api.js` : `comparePeriods()` + `compareExercises()`
+
+**Étape 5 — Moteur d'alertes**
+- `services/alert_engine.py` : `run_alert_engine()` appelé au démarrage et à chaque sync
+  — 4 règles : surcharge cardio (>150% semaine précédente), repos insuffisant (≥5j/7),
+  PR 1RM battu (par exercice), hydratation basse (<1.5L moy. 7j)
+- `routers/alerts.py` : `GET/PUT/DELETE /api/alerts[/{id}]` + `DELETE /api/alerts` (clear read)
+- `js/alerts.js` : bannière partagée toutes pages, dismiss par alerte, badge nav
+- `api.js` : `getAlerts()`, `markAlertRead()`, `deleteAlert()`, `clearReadAlerts()`
+- `main.py` : `run_alert_engine()` appelé dans `on_startup()`
 
 **Étape 4 — Module nutrition**
 - `routers/nutrition.py` : CRUD journal nutritionnel par date
