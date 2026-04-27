@@ -1,5 +1,48 @@
 # CHANGELOG — AthletiX
 
+## [v2.0.0-dev] - 2026-04-27 (en cours)
+
+### En cours / À venir
+- Étape 5 : Moteur d'alertes — `services/alert_engine.py` + `routers/alerts.py`
+- Étape 6 : Module comparaison — `routers/compare.py` + `compare.html`
+- Étape 7 : Dashboard V2 — widget nutrition, bannière alertes
+- Étape 8 : Clôture V2 — tag `v2.0.0`, docs finales
+
+### Added (Étapes 1–4)
+
+**Étape 4 — Module nutrition**
+- `routers/nutrition.py` : CRUD journal nutritionnel par date
+  (`GET/POST/PUT/DELETE /api/nutrition/logs[/{date}]`)
+  PUT remplace intégralement tous les champs (sémantique "full replace")
+- `nutrition.html` + `nutrition.js` : navigation ←/→ entre les jours,
+  formulaire hydratation/score/repas pré-post/compléments/notes,
+  historique 10 derniers jours cliquable
+- `api.js` : `err.status` propagé sur toutes les erreurs HTTP
+  (remplace le parsing de message pour les 404)
+- Navigation "🥗 Nutrition" ajoutée dans les 7 pages existantes
+
+**Étape 3 — Frontend musculation**
+- `strength.html` + `strength.js` : liste séances paginée, filtres dates,
+  bibliothèque exercices avec création custom inline
+- `strength_session.html` + `strength_session.js` : formulaire séance complète
+  (scores touch-aware, séries dynamiques add/remove par exercice, create/update/delete)
+- `exercise.html` + `exercise.js` : fiche exercice, courbe Chart.js 1RM,
+  PR box, historique tabulaire
+- `css/style.css` : ajout `.btn-danger`
+- Navigation "💪 Musculation" ajoutée dans les 4 pages V1
+
+**Étape 2 — Backend musculation**
+- `routers/strength.py` : 8 endpoints `/api/strength/*`
+  Sessions CRUD + bibliothèque exercices + courbe progression 1RM (Epley)
+- `main.py` : enregistrement du router strength
+
+**Étape 1 — Migration DB V2**
+- `database.py` : bloc V2 séparé (5 tables : exercises, strength_sessions,
+  exercise_sets, alerts, nutrition_logs)
+- `_seed_exercises()` : 16 exercices par défaut (INSERT OR IGNORE, idempotent)
+
+---
+
 ## [v1.0.0] - 2026-04-27
 
 ### Release
