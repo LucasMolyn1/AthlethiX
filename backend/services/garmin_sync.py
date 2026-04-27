@@ -18,6 +18,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 from garminconnect import Garmin, GarminConnectAuthenticationError, GarminConnectConnectionError
+from garth.exc import GarthHTTPError
 from dotenv import load_dotenv
 
 from database import get_connection
@@ -73,9 +74,14 @@ def _get_client() -> Garmin:
     try:
         client.login()
         logger.info("Connexion Garmin réussie (tokens mis en cache)")
+    except GarthHTTPError as e:
+        # Ne pas réessayer sur 429 — laisser l'exception remonter
+        raise
+    except (GarminConnectAuthenticationError, GarminConnectConnectionError):
+        raise
     except Exception:
         # Tokens absents ou expirés → ré-authentification complète
-        logger.warning("Tokens expirés ou absents, ré-authentification...")
+        logger.warning("Tokens absents ou expirés, ré-authentification...")
         client.login()
         logger.info("Ré-authentification Garmin réussie")
 
@@ -124,9 +130,21 @@ def sync_activities(days: int = 30) -> dict:
     """
     try:
         client = _get_client()
+    except GarthHTTPError as e:
+        msg = str(e)
+        if "429" in msg:
+            err = "Rate limit Garmin : trop de tentatives. Réessayer dans 15 minutes."
+        else:
+            err = f"Erreur Garmin : {e}"
+        _log_sync(status="error", error_msg=err)
+        return {"added": 0, "skipped": 0, "error": err}
     except (GarminConnectAuthenticationError, GarminConnectConnectionError, ValueError) as e:
         _log_sync(status="error", error_msg=str(e))
         return {"added": 0, "skipped": 0, "error": str(e)}
+    except Exception as e:
+        err = f"Erreur inattendue : {e}"
+        _log_sync(status="error", error_msg=err)
+        return {"added": 0, "skipped": 0, "error": err}
 
     end_date = datetime.now()
     start_date = end_date - timedelta(days=days)
