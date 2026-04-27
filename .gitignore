@@ -1,0 +1,39 @@
+# Environnement Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# Variables sensibles — NE JAMAIS COMMITTER
+.env
+*.env
+
+# Base de données
+*.db
+*.sqlite
+*.sqlite3
+
+# Tokens Garmin (stockés localement par garminconnect)
+.garminconnect
+garmin_tokens.json
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Distribution / build
+dist/
+build/
+*.egg-info/
