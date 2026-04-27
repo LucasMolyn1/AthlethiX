@@ -101,5 +101,11 @@ const API = (() => {
       body: JSON.stringify(data),
     }),
     deleteNutritionLog: (date) => request(`/nutrition/logs/${date}`, { method: "DELETE" }),
+
+    // --- Alertes ---
+    getAlerts:    (unreadOnly = true) => request(`/alerts?unread_only=${unreadOnly}`),
+    markAlertRead: (id) => request(`/alerts/${id}/read`, { method: "PUT" }),
+    deleteAlert:   (id) => request(`/alerts/${id}`,      { method: "DELETE" }),
+    clearReadAlerts: ()  => request("/alerts",            { method: "DELETE" }),
   };
 })();

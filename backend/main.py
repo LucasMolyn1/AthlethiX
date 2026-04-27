@@ -11,7 +11,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 from database import init_db
-from routers import garmin, activities, journal, dashboard, strength, nutrition
+from routers import garmin, activities, journal, dashboard, strength, nutrition, alerts
+from services.alert_engine import run_alert_engine
 
 load_dotenv()
 
@@ -41,6 +42,7 @@ app.include_router(journal.router)
 app.include_router(dashboard.router)
 app.include_router(strength.router)
 app.include_router(nutrition.router)
+app.include_router(alerts.router)
 
 
 @app.on_event("startup")
@@ -48,6 +50,7 @@ def on_startup():
     """Initialise la DB au démarrage si les tables n'existent pas."""
     init_db()
     logging.getLogger(__name__).info("Base de données initialisée.")
+    run_alert_engine()
 
 
 @app.get("/api/health")
