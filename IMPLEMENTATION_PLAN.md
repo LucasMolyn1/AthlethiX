@@ -7,13 +7,13 @@
 | Phase 0 | Structure projet + initialisation Git | ✅ DONE |
 | Phase 1 | Base de données SQLite + modèles | ✅ DONE |
 | Phase 2 | Sync Garmin (service + router) | ✅ DONE |
-| Phase 3 | CRUD activités + journal | TODO |
-| Phase 4 | Dashboard API | TODO |
-| Phase 5 | Frontend — Dashboard | TODO |
-| Phase 6 | Frontend — Historique | TODO |
-| Phase 7 | Frontend — Détail activité + Journal | TODO |
-| Phase 8 | Configuration Apache2 + déploiement | TODO |
-| Phase 9 | Script install.sh + cron | TODO |
+| Phase 3 | CRUD activités + journal | ✅ DONE |
+| Phase 4 | Dashboard API | ✅ DONE |
+| Phase 5 | Frontend — Dashboard | ✅ DONE |
+| Phase 6 | Frontend — Historique | ✅ DONE |
+| Phase 7 | Frontend — Détail activité + Journal | ✅ DONE |
+| Phase 8 | Configuration Apache2 + déploiement | ✅ DONE |
+| Phase 9 | Script install.sh + cron | ✅ DONE |
 | Phase 10 | Tests + documentation finale | TODO |
 
 ---
