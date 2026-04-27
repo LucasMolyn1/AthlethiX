@@ -102,6 +102,10 @@ def test_connection() -> dict:
     except ValueError as e:
         return {"success": False, "error": str(e)}
     except Exception as e:
+        msg = str(e)
+        if "429" in msg:
+            logger.warning("Rate limit Garmin (429) — réessayer dans 15 minutes")
+            return {"success": False, "error": "Rate limit Garmin : trop de tentatives. Réessayer dans 15 minutes."}
         logger.error("Erreur inattendue : %s", e)
         return {"success": False, "error": f"Erreur inattendue : {e}"}
 

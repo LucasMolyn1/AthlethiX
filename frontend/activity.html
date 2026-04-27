@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AthletiX — Activité</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">AthletiX</div>
+    <nav>
+      <a href="index.html"><span class="icon">📊</span> Dashboard</a>
+      <a href="history.html"><span class="icon">📋</span> Historique</a>
+      <a href="journal.html"><span class="icon">📝</span> Journal</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <div style="display:flex;align-items:center;gap:14px">
+        <a href="history.html" class="btn btn-ghost" style="padding:6px 12px">← Retour</a>
+        <h1 id="page-title">Activité</h1>
+      </div>
+      <span id="activity-badge"></span>
+    </div>
+
+    <!-- Métriques principales -->
+    <div class="detail-grid" id="detail-stats">
+      <p class="loading">Chargement...</p>
+    </div>
+
+    <!-- Journal de séance -->
+    <div class="card" style="margin-top:24px">
+      <div class="card-title">Journal de séance</div>
+
+      <div class="form-group">
+        <label>Contexte</label>
+        <input type="text" id="j-context" placeholder="Ex : lendemain de garde, fatigue accumulée...">
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:16px">
+        <div class="form-group">
+          <label>Ressenti général</label>
+          <div class="score-group">
+            <input type="range" id="j-feeling" min="1" max="10" value="5" oninput="document.getElementById('v-feeling').textContent=this.value">
+            <span class="score-val" id="v-feeling">5</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Fatigue</label>
+          <div class="score-group">
+            <input type="range" id="j-fatigue" min="1" max="10" value="5" oninput="document.getElementById('v-fatigue').textContent=this.value">
+            <span class="score-val" id="v-fatigue">5</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Sommeil (veille)</label>
+          <div class="score-group">
+            <input type="range" id="j-sleep" min="1" max="10" value="5" oninput="document.getElementById('v-sleep').textContent=this.value">
+            <span class="score-val" id="v-sleep">5</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Douleurs / gênes</label>
+        <input type="text" id="j-pain" placeholder="Ex : genou droit, tendon d'Achille...">
+      </div>
+
+      <div class="form-group">
+        <label>Notes libres</label>
+        <textarea id="j-notes" rows="3" placeholder="Commentaire libre..."></textarea>
+      </div>
+
+      <div style="display:flex;gap:10px;margin-top:4px">
+        <button class="btn btn-primary" id="btn-save-journal">Enregistrer</button>
+        <span id="journal-status" style="font-size:.82rem;color:var(--text-muted);align-self:center"></span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+<script src="js/api.js"></script>
+<script src="js/activity.js"></script>
+</body>
+</html>

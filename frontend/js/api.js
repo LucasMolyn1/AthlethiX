@@ -1,0 +1,56 @@
+/**
+ * api.js — Couche d'appels vers le backend FastAPI.
+ * Toutes les requêtes HTTP passent par ici.
+ * BASE_URL pointe vers /api (proxyfié par Apache2 vers FastAPI).
+ */
+
+const API = (() => {
+  const BASE = "/api";
+
+  async function request(path, options = {}) {
+    const res = await fetch(BASE + path, options);
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.detail || `HTTP ${res.status}`);
+    }
+    return res.json();
+  }
+
+  return {
+    // --- Dashboard ---
+    getWeekSummary:    () => request("/dashboard/week"),
+    getFitnessCurve:   () => request("/dashboard/fitness"),
+    getRecentActivities: () => request("/dashboard/recent"),
+    getSyncStatus:     () => request("/dashboard/sync-status"),
+
+    // --- Activités ---
+    getActivities: (params = {}) => {
+      const q = new URLSearchParams(
+        Object.fromEntries(Object.entries(params).filter(([, v]) => v != null))
+      );
+      return request("/activities" + (q.toString() ? "?" + q : ""));
+    },
+    getActivity: (id) => request(`/activities/${id}`),
+
+    // --- Journal ---
+    getJournal:    (activityId) => request(`/journal/${activityId}`),
+    createJournal: (activityId, data) => request(`/journal/${activityId}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    }),
+    updateJournal: (activityId, data) => request(`/journal/${activityId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    }),
+
+    // --- Garmin ---
+    testGarmin: () => request("/garmin/test"),
+    syncGarmin: (days = 30) => request("/garmin/sync", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ days }),
+    }),
+  };
+})();

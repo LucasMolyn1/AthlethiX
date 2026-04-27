@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AthletiX — Journal</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">AthletiX</div>
+    <nav>
+      <a href="index.html"><span class="icon">📊</span> Dashboard</a>
+      <a href="history.html"><span class="icon">📋</span> Historique</a>
+      <a href="journal.html" class="active"><span class="icon">📝</span> Journal</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <h1>Journal de séances</h1>
+    </div>
+
+    <p style="color:var(--text-muted);font-size:.9rem;margin-bottom:24px">
+      Clique sur une activité dans l'<a href="history.html">historique</a> pour ouvrir sa page détail et remplir son journal.
+    </p>
+
+    <!-- Dernières activités avec journal -->
+    <div class="card">
+      <div class="card-title">Activités récentes avec journal</div>
+      <ul class="activity-list" id="journal-list">
+        <li class="loading">Chargement...</li>
+      </ul>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+<script src="js/api.js"></script>
+<script src="js/journal.js"></script>
+</body>
+</html>
