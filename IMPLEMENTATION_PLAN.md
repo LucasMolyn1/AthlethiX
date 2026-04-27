@@ -14,7 +14,12 @@
 | Phase 7 | Frontend — Détail activité + Journal | ✅ DONE |
 | Phase 8 | Configuration Apache2 + déploiement | ✅ DONE |
 | Phase 9 | Script install.sh + cron | ✅ DONE |
-| Phase 10 | Tests + documentation finale | ⚠️ PARTIAL |
+| Phase 10 | Tests + documentation finale | ➡️ Reporté V2 |
+
+> **V1 validée fonctionnellement le 2026-04-27.**
+> Sync Garmin en attente de levée du rate limit (IP de la VM temporairement bannie
+> suite aux tentatives répétées lors du déploiement). Toutes les fonctionnalités
+> sont implémentées et le code est correct — le problème est opérationnel, pas technique.
 
 ---
 

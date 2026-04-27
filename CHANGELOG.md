@@ -1,5 +1,28 @@
 # CHANGELOG — AthletiX
 
+## [v1.0.0] - 2026-04-27
+
+### Release
+- V1 complète : toutes les fonctionnalités planifiées implémentées et déployées
+- Backend FastAPI opérationnel sur VM Debian (192.168.1.26), service systemd actif
+- Frontend vanilla JS/CSS déployé dans `/var/www/athletix`
+- Sync Garmin Connect en attente de levée du rate limit (opérationnel dès résolution)
+
+### Added
+- `routers/activities.py` : liste paginée avec filtres, détail activité + journal intégré
+- `routers/journal.py` : CRUD complet journal de séance (GET/POST/PUT)
+- `routers/dashboard.py` : résumé semaine, courbe de forme, activités récentes, sync-status
+- Table `sync_log` : historique de toutes les synchronisations
+- `GarthHTTPError` importée explicitement — plus de HTTP 500 sur erreur Garmin
+
+### Fixed
+- `garmin_sync.py` : `_get_client()` ne relance plus `login()` sur 429 (aggravait le rate limit)
+- `sync_activities()` attrape désormais `GarthHTTPError` → retourne JSON 200 avec message d'erreur
+
+### Docs
+- `WALKTHROUGH.md` entièrement réécrit : architecture détaillée, tokens Garmin, commandes VM
+- `IMPLEMENTATION_PLAN.md` : audit V1 complet, statuts réels vérifiés dans le code
+
 ## [v0.2.0] - 2026-04-27
 
 ### Added
