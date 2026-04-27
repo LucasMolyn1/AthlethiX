@@ -28,6 +28,7 @@ def init_db() -> None:
     """Crée les tables si elles n'existent pas encore. Idempotent."""
     conn = get_connection()
     try:
+        # ── V1 — tables existantes, non modifiées ──────────────────────────
         conn.executescript("""
             CREATE TABLE IF NOT EXISTS activities (
                 id          INTEGER PRIMARY KEY,
@@ -65,6 +66,101 @@ def init_db() -> None:
                 error_msg   TEXT
             );
         """)
+
+        # ── V2 — nouvelles tables (migration additive) ─────────────────────
+        conn.executescript("""
+            CREATE TABLE IF NOT EXISTS exercises (
+                id          INTEGER PRIMARY KEY,
+                name        TEXT NOT NULL UNIQUE,
+                category    TEXT NOT NULL CHECK(category IN ('push','pull','legs','core','cardio')),
+                is_custom   INTEGER DEFAULT 0,
+                created_at  TEXT DEFAULT CURRENT_TIMESTAMP
+            );
+
+            CREATE TABLE IF NOT EXISTS strength_sessions (
+                id              INTEGER PRIMARY KEY,
+                date            TEXT NOT NULL,
+                duration        INTEGER,
+                session_type    TEXT,
+                context         TEXT,
+                fatigue_score   INTEGER CHECK(fatigue_score BETWEEN 1 AND 10),
+                sleep_score     INTEGER CHECK(sleep_score BETWEEN 1 AND 10),
+                feeling_score   INTEGER CHECK(feeling_score BETWEEN 1 AND 10),
+                notes           TEXT,
+                created_at      TEXT DEFAULT CURRENT_TIMESTAMP,
+                updated_at      TEXT
+            );
+
+            CREATE TABLE IF NOT EXISTS exercise_sets (
+                id          INTEGER PRIMARY KEY,
+                session_id  INTEGER NOT NULL REFERENCES strength_sessions(id) ON DELETE CASCADE,
+                exercise_id INTEGER NOT NULL REFERENCES exercises(id),
+                set_number  INTEGER NOT NULL,
+                reps        INTEGER,
+                weight_kg   REAL,
+                feeling     INTEGER CHECK(feeling BETWEEN 1 AND 5),
+                notes       TEXT
+            );
+
+            CREATE TABLE IF NOT EXISTS alerts (
+                id          INTEGER PRIMARY KEY,
+                type        TEXT NOT NULL,
+                level       TEXT NOT NULL CHECK(level IN ('danger','warning','info','success')),
+                message     TEXT NOT NULL,
+                is_read     INTEGER DEFAULT 0,
+                created_at  TEXT DEFAULT CURRENT_TIMESTAMP
+            );
+
+            CREATE TABLE IF NOT EXISTS nutrition_logs (
+                id                  INTEGER PRIMARY KEY,
+                date                TEXT NOT NULL UNIQUE,
+                hydration_liters    REAL,
+                nutrition_score     INTEGER CHECK(nutrition_score BETWEEN 1 AND 10),
+                pre_workout_meal    TEXT,
+                post_workout_meal   TEXT,
+                supplements         TEXT,
+                notes               TEXT,
+                created_at          TEXT DEFAULT CURRENT_TIMESTAMP,
+                updated_at          TEXT
+            );
+        """)
+
+        conn.commit()
+    finally:
+        conn.close()
+
+    _seed_exercises()
+
+
+# Bibliothèque d'exercices par défaut — insérée une seule fois (INSERT OR IGNORE)
+_DEFAULT_EXERCISES = [
+    ("Squat",                    "legs"),
+    ("Deadlift",                 "legs"),
+    ("Bench Press",              "push"),
+    ("Overhead Press",           "push"),
+    ("Pull-up",                  "pull"),
+    ("Dips",                     "push"),
+    ("Rowing Barre",             "pull"),
+    ("Fentes",                   "legs"),
+    ("Hip Thrust",               "legs"),
+    ("Planche",                  "core"),
+    ("Développé Incliné",        "push"),
+    ("Curl Biceps",              "pull"),
+    ("Triceps Poulie",           "push"),
+    ("Leg Press",                "legs"),
+    ("Soulevé de Terre Roumain", "legs"),
+    ("Kettlebell Swing",         "cardio"),
+]
+
+
+def _seed_exercises() -> None:
+    """Insère la bibliothèque d'exercices par défaut si elle est vide. Idempotent."""
+    conn = get_connection()
+    try:
+        conn.executemany(
+            "INSERT OR IGNORE INTO exercises (name, category, is_custom) VALUES (?, ?, 0)",
+            _DEFAULT_EXERCISES,
+        )
         conn.commit()
     finally:
         conn.close()
