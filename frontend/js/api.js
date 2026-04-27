@@ -11,7 +11,9 @@ const API = (() => {
     const res = await fetch(BASE + path, options);
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      throw new Error(body.detail || `HTTP ${res.status}`);
+      const err = new Error(body.detail || `HTTP ${res.status}`);
+      err.status = res.status;
+      throw err;
     }
     return res.json();
   }
@@ -79,5 +81,25 @@ const API = (() => {
       body: JSON.stringify(data),
     }),
     getExerciseProgress: (id) => request(`/strength/exercises/${id}/progress`),
+
+    // --- Nutrition ---
+    getNutritionLogs: (params = {}) => {
+      const q = new URLSearchParams(
+        Object.fromEntries(Object.entries(params).filter(([, v]) => v != null))
+      );
+      return request("/nutrition/logs" + (q.toString() ? "?" + q : ""));
+    },
+    getNutritionLog:    (date) => request(`/nutrition/logs/${date}`),
+    createNutritionLog: (data) => request("/nutrition/logs", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    }),
+    updateNutritionLog: (date, data) => request(`/nutrition/logs/${date}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    }),
+    deleteNutritionLog: (date) => request(`/nutrition/logs/${date}`, { method: "DELETE" }),
   };
 })();

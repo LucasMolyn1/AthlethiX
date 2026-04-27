@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AthletiX — Nutrition</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">AthletiX</div>
+    <nav>
+      <a href="index.html"><span class="icon">📊</span> Dashboard</a>
+      <a href="history.html"><span class="icon">📋</span> Historique</a>
+      <a href="journal.html"><span class="icon">📝</span> Journal</a>
+      <a href="strength.html"><span class="icon">💪</span> Musculation</a>
+      <a href="nutrition.html" class="active"><span class="icon">🥗</span> Nutrition</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <h1>Nutrition</h1>
+      <button class="btn btn-danger" id="btn-delete" style="display:none" onclick="deleteLog()">Supprimer</button>
+    </div>
+
+    <!-- Navigation par date -->
+    <div class="card" style="margin-bottom:20px">
+      <div style="display:flex;align-items:center;gap:16px;justify-content:center">
+        <button class="btn btn-ghost" onclick="prevDay()">←</button>
+        <div style="text-align:center">
+          <input type="date" id="current-date"
+            style="background:var(--surface2);border:1px solid var(--border);color:var(--text);
+                   padding:8px 14px;border-radius:7px;font-size:1rem;font-weight:600"
+            onchange="loadLog(this.value)">
+          <div id="day-label" style="font-size:.8rem;color:var(--text-muted);margin-top:4px"></div>
+        </div>
+        <button class="btn btn-ghost" onclick="nextDay()">→</button>
+      </div>
+    </div>
+
+    <!-- Formulaire journal -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title" id="form-status">Nouveau journal</div>
+
+      <div class="grid-2" style="gap:16px;margin-bottom:16px">
+        <div class="form-group">
+          <label>Hydratation (litres)</label>
+          <input type="number" id="hydration" min="0" max="10" step="0.1" placeholder="ex: 2.5"
+            style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:7px;font-size:.9rem">
+        </div>
+        <div class="form-group">
+          <label>Score alimentation &nbsp;<span id="score-val" class="score-val">—</span></label>
+          <div class="score-group">
+            <span style="color:var(--text-muted);font-size:.8rem">1</span>
+            <input type="range" min="1" max="10" id="nutrition-score" value="5" data-touched="0"
+              oninput="this.dataset.touched='1';document.getElementById('score-val').textContent=this.value">
+            <span style="color:var(--text-muted);font-size:.8rem">10</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2" style="gap:16px;margin-bottom:16px">
+        <div class="form-group">
+          <label>Repas pré-entraînement</label>
+          <input type="text" id="pre-meal" placeholder="ex: flocons d'avoine, banane">
+        </div>
+        <div class="form-group">
+          <label>Repas post-entraînement</label>
+          <input type="text" id="post-meal" placeholder="ex: poulet riz, shake protéiné">
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom:16px">
+        <label>Compléments alimentaires</label>
+        <input type="text" id="supplements" placeholder="ex: créatine 5g, vitamine D 2000UI">
+      </div>
+
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="notes" rows="2" placeholder="Observations sur la journée alimentaire..."></textarea>
+      </div>
+
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:4px">
+        <button class="btn btn-primary" onclick="saveLog()">Enregistrer</button>
+      </div>
+    </div>
+
+    <!-- Historique récent -->
+    <div class="card">
+      <div class="card-title">Derniers journaux</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Hydratation</th>
+              <th>Score</th>
+              <th>Pré-training</th>
+              <th>Post-training</th>
+              <th>Compléments</th>
+            </tr>
+          </thead>
+          <tbody id="recent-body">
+            <tr><td colspan="6" class="loading">Chargement...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+<script src="js/api.js"></script>
+<script src="js/nutrition.js"></script>
+</body>
+</html>
