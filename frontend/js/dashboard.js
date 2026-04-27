@@ -150,6 +150,54 @@ async function triggerSync() {
   }
 }
 
+// ---- Widget nutrition + musculation semaine ----
+async function loadExtras() {
+  try {
+    const d = await API.getDashboardExtras();
+    renderNutritionWidget(d.nutrition);
+    renderStrengthWidget(d.strength);
+  } catch (_) {}
+}
+
+function renderNutritionWidget(n) {
+  const el = document.getElementById("widget-nutrition");
+  if (!el) return;
+  const hydStr   = n.avg_hydration != null ? n.avg_hydration + " L" : "—";
+  const scoreStr = n.avg_score     != null ? n.avg_score + " / 10"  : "—";
+  const logged   = n.days_logged;
+  el.innerHTML = `
+    <div class="stat-card">
+      <div class="label">💧 Hydratation moy.</div>
+      <div class="value">${hydStr}</div>
+      <div class="unit">${logged} jour${logged !== 1 ? "s" : ""} loggé${logged !== 1 ? "s" : ""}</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">🥗 Score nutrition moy.</div>
+      <div class="value">${scoreStr}</div>
+      <div class="unit">sur la semaine</div>
+    </div>`;
+}
+
+function renderStrengthWidget(s) {
+  const el = document.getElementById("widget-strength");
+  if (!el) return;
+  const vol = s.total_volume;
+  const volStr = vol > 0
+    ? (vol >= 1000 ? (vol / 1000).toFixed(1) + " t" : vol + " kg")
+    : "—";
+  el.innerHTML = `
+    <div class="stat-card">
+      <div class="label">💪 Séances muscu</div>
+      <div class="value">${s.sessions_count}</div>
+      <div class="unit">${s.total_sets} série${s.total_sets !== 1 ? "s" : ""} au total</div>
+    </div>
+    <div class="stat-card">
+      <div class="label">🏋️ Volume soulevé</div>
+      <div class="value">${volStr}</div>
+      <div class="unit">cette semaine</div>
+    </div>`;
+}
+
 async function loadAll() {
   await Promise.all([loadSyncStatus(), loadWeekSummary(), loadRecent()]);
 }
@@ -157,5 +205,6 @@ async function loadAll() {
 document.addEventListener("DOMContentLoaded", () => {
   loadAll();
   loadFitnessChart();
+  loadExtras();
   document.getElementById("btn-sync")?.addEventListener("click", triggerSync);
 });

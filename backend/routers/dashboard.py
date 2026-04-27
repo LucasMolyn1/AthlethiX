@@ -114,3 +114,55 @@ def sync_status():
         return dict(row)
     finally:
         conn.close()
+
+
+@router.get("/extras")
+def dashboard_extras():
+    """
+    Données V2 : nutrition + musculation de la semaine courante.
+    Utilisé par les widgets du dashboard.
+    """
+    monday = datetime.now() - timedelta(days=datetime.now().weekday())
+    monday_str = monday.strftime("%Y-%m-%d")
+    today_str  = datetime.now().strftime("%Y-%m-%d")
+
+    conn = get_connection()
+    try:
+        nut_rows = conn.execute(
+            "SELECT hydration_liters, nutrition_score FROM nutrition_logs WHERE date >= ? AND date <= ?",
+            (monday_str, today_str),
+        ).fetchall()
+
+        days_logged  = len(nut_rows)
+        hydrations   = [r["hydration_liters"] for r in nut_rows if r["hydration_liters"] is not None]
+        scores       = [r["nutrition_score"]  for r in nut_rows if r["nutrition_score"]  is not None]
+        avg_hydration = round(sum(hydrations) / len(hydrations), 1) if hydrations else None
+        avg_score     = round(sum(scores)     / len(scores),     1) if scores     else None
+
+        str_row = conn.execute(
+            """
+            SELECT
+                COUNT(DISTINCT ss.id)                       AS sessions_count,
+                COUNT(s.id)                                 AS total_sets,
+                COALESCE(SUM(s.weight_kg * s.reps), 0)     AS total_volume
+            FROM strength_sessions ss
+            LEFT JOIN exercise_sets s ON s.session_id = ss.id
+            WHERE ss.date >= ?
+            """,
+            (monday_str,),
+        ).fetchone()
+
+        return {
+            "nutrition": {
+                "days_logged":    days_logged,
+                "avg_hydration":  avg_hydration,
+                "avg_score":      avg_score,
+            },
+            "strength": {
+                "sessions_count": str_row["sessions_count"],
+                "total_sets":     str_row["total_sets"],
+                "total_volume":   round(str_row["total_volume"]),
+            },
+        }
+    finally:
+        conn.close()

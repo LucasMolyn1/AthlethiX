@@ -20,10 +20,11 @@ const API = (() => {
 
   return {
     // --- Dashboard ---
-    getWeekSummary:    () => request("/dashboard/week"),
-    getFitnessCurve:   () => request("/dashboard/fitness"),
+    getWeekSummary:      () => request("/dashboard/week"),
+    getFitnessCurve:     () => request("/dashboard/fitness"),
     getRecentActivities: () => request("/dashboard/recent"),
-    getSyncStatus:     () => request("/dashboard/sync-status"),
+    getSyncStatus:       () => request("/dashboard/sync-status"),
+    getDashboardExtras:  () => request("/dashboard/extras"),
 
     // --- Activités ---
     getActivities: (params = {}) => {

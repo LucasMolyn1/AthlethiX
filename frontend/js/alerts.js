@@ -25,6 +25,9 @@ async function loadAlertsBanner() {
   } catch (_) {
     return;
   }
+  // Badge dans la sidebar
+  _updateNavBadge(alerts.length);
+
   if (!alerts.length) return;
 
   const main = document.querySelector(".main-content");
@@ -63,7 +66,29 @@ async function dismissAlert(id) {
     if (el) el.remove();
     const banner = document.getElementById("alerts-banner");
     if (banner && !banner.querySelector("[id^='alert-']")) banner.remove();
+    const remaining = document.querySelectorAll("[id^='alert-']").length;
+    _updateNavBadge(remaining);
   } catch (_) {}
+}
+
+function _updateNavBadge(count) {
+  const logo = document.querySelector(".sidebar-logo");
+  if (!logo) return;
+  let badge = document.getElementById("alerts-nav-badge");
+  if (count > 0) {
+    if (!badge) {
+      badge = document.createElement("span");
+      badge.id = "alerts-nav-badge";
+      badge.style.cssText =
+        "display:inline-block;background:#f87171;color:#fff;border-radius:99px;" +
+        "font-size:.62rem;font-weight:700;padding:1px 6px;margin-left:8px;" +
+        "vertical-align:middle;line-height:1.5";
+      logo.appendChild(badge);
+    }
+    badge.textContent = count;
+  } else if (badge) {
+    badge.remove();
+  }
 }
 
 function escHtml(s) {
