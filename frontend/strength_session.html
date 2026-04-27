@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AthletiX — Séance</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">AthletiX</div>
+    <nav>
+      <a href="index.html"><span class="icon">📊</span> Dashboard</a>
+      <a href="history.html"><span class="icon">📋</span> Historique</a>
+      <a href="journal.html"><span class="icon">📝</span> Journal</a>
+      <a href="strength.html"><span class="icon">💪</span> Musculation</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <div style="display:flex;align-items:center;gap:12px">
+        <a href="strength.html" class="btn btn-ghost" style="padding:6px 12px">← Retour</a>
+        <h1 id="page-title">Nouvelle séance</h1>
+      </div>
+      <button class="btn btn-danger" id="btn-delete" style="display:none" onclick="deleteSession()">Supprimer</button>
+    </div>
+
+    <!-- Métadonnées -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title">Informations</div>
+
+      <div class="grid-2" style="gap:16px">
+        <div class="form-group">
+          <label>Date *</label>
+          <input type="date" id="date" required style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:7px;font-size:.9rem">
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select id="session-type" style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:7px;font-size:.9rem">
+            <option value="">— Choisir —</option>
+            <option value="full_body">Full Body</option>
+            <option value="push">Push</option>
+            <option value="pull">Pull</option>
+            <option value="legs">Legs</option>
+            <option value="upper">Haut du corps</option>
+            <option value="lower">Bas du corps</option>
+            <option value="cardio">Cardio</option>
+            <option value="other">Autre</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Durée (minutes)</label>
+          <input type="number" id="duration" min="1" max="600" placeholder="ex: 60" style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:7px;font-size:.9rem">
+        </div>
+        <div class="form-group">
+          <label>Contexte</label>
+          <input type="text" id="context" placeholder="Salle, maison, extérieur...">
+        </div>
+      </div>
+
+      <div class="grid-3" style="gap:16px;margin-top:4px">
+        <div class="form-group">
+          <label>Fatigue &nbsp;<span id="fatigue-val" class="score-val">—</span></label>
+          <div class="score-group">
+            <span style="color:var(--text-muted);font-size:.8rem">1</span>
+            <input type="range" min="1" max="10" id="fatigue" value="5" data-touched="0"
+              oninput="this.dataset.touched='1';document.getElementById('fatigue-val').textContent=this.value">
+            <span style="color:var(--text-muted);font-size:.8rem">10</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Sommeil &nbsp;<span id="sleep-val" class="score-val">—</span></label>
+          <div class="score-group">
+            <span style="color:var(--text-muted);font-size:.8rem">1</span>
+            <input type="range" min="1" max="10" id="sleep" value="5" data-touched="0"
+              oninput="this.dataset.touched='1';document.getElementById('sleep-val').textContent=this.value">
+            <span style="color:var(--text-muted);font-size:.8rem">10</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Ressenti &nbsp;<span id="feeling-val" class="score-val">—</span></label>
+          <div class="score-group">
+            <span style="color:var(--text-muted);font-size:.8rem">1</span>
+            <input type="range" min="1" max="10" id="feeling" value="5" data-touched="0"
+              oninput="this.dataset.touched='1';document.getElementById('feeling-val').textContent=this.value">
+            <span style="color:var(--text-muted);font-size:.8rem">10</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="notes" rows="2" placeholder="Observations, programme..."></textarea>
+      </div>
+    </div>
+
+    <!-- Séries -->
+    <div class="card" style="margin-bottom:20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="card-title" style="margin:0">Séries</div>
+        <button class="btn btn-ghost" onclick="addSetRow()">+ Ajouter une série</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Exercice</th>
+              <th>Reps</th>
+              <th>Poids (kg)</th>
+              <th>Ressenti</th>
+              <th>Notes</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="sets-tbody"></tbody>
+        </table>
+      </div>
+      <p id="sets-empty" style="color:var(--text-muted);font-size:.88rem;padding:16px;text-align:center">
+        Aucune série — cliquez sur "+ Ajouter une série"
+      </p>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex;gap:10px;justify-content:flex-end">
+      <a href="strength.html" class="btn btn-ghost">Annuler</a>
+      <button class="btn btn-primary" onclick="saveSession()">Enregistrer</button>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+<script src="js/api.js"></script>
+<script src="js/strength_session.js"></script>
+</body>
+</html>

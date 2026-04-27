@@ -207,6 +207,7 @@ a:hover { text-decoration: underline; }
 .btn:active { transform: scale(.97); }
 .btn-primary { background: var(--accent); color: #fff; }
 .btn-ghost   { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+.btn-danger  { background: var(--red); color: #fff; }
 
 /* ===== Chart container ===== */
 .chart-container { position: relative; height: 220px; }

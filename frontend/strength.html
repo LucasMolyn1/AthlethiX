@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AthletiX — Musculation</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">AthletiX</div>
+    <nav>
+      <a href="index.html"><span class="icon">📊</span> Dashboard</a>
+      <a href="history.html"><span class="icon">📋</span> Historique</a>
+      <a href="journal.html"><span class="icon">📝</span> Journal</a>
+      <a href="strength.html" class="active"><span class="icon">💪</span> Musculation</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <h1>Musculation</h1>
+      <button class="btn btn-primary" onclick="location.href='strength_session.html'">+ Nouvelle séance</button>
+    </div>
+
+    <!-- Filtres -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="filters">
+        <input type="date" id="date-from">
+        <input type="date" id="date-to">
+        <button class="btn btn-ghost" onclick="applyFilters()">Filtrer</button>
+        <button class="btn btn-ghost" onclick="resetFilters()">Tout</button>
+      </div>
+    </div>
+
+    <!-- Liste des séances -->
+    <div class="card" style="margin-bottom:24px">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Durée</th>
+              <th>Séries</th>
+              <th>Ressenti</th>
+              <th>Fatigue</th>
+              <th>Sommeil</th>
+            </tr>
+          </thead>
+          <tbody id="sessions-body">
+            <tr><td colspan="7" class="loading">Chargement...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px;justify-content:center;align-items:center">
+        <button class="btn btn-ghost" id="btn-prev" onclick="prevPage()">← Précédent</button>
+        <span id="page-info" style="color:var(--text-muted);font-size:.85rem"></span>
+        <button class="btn btn-ghost" id="btn-next" onclick="nextPage()">Suivant →</button>
+      </div>
+    </div>
+
+    <!-- Bibliothèque d'exercices -->
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+        <div class="card-title" style="margin:0">Bibliothèque d'exercices</div>
+        <button class="btn btn-ghost" onclick="toggleExerciseForm()">+ Exercice personnalisé</button>
+      </div>
+
+      <div id="exercise-form" style="display:none;margin-bottom:16px;padding:16px;background:var(--surface2);border-radius:8px">
+        <div style="display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap">
+          <div class="form-group" style="margin:0;flex:1;min-width:160px">
+            <label>Nom</label>
+            <input type="text" id="ex-name" placeholder="ex: Curl Marteau">
+          </div>
+          <div class="form-group" style="margin:0">
+            <label>Catégorie</label>
+            <select id="ex-category" style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:7px;font-size:.9rem">
+              <option value="push">Push</option>
+              <option value="pull">Pull</option>
+              <option value="legs">Legs</option>
+              <option value="core">Core</option>
+              <option value="cardio">Cardio</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="createExercise()">Créer</button>
+        </div>
+      </div>
+
+      <div id="exercises-list" style="display:flex;flex-wrap:wrap;gap:8px">
+        <span class="loading">Chargement...</span>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+<script src="js/api.js"></script>
+<script src="js/strength.js"></script>
+</body>
+</html>

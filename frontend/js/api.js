@@ -52,5 +52,32 @@ const API = (() => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ days }),
     }),
+
+    // --- Musculation ---
+    getSessions: (params = {}) => {
+      const q = new URLSearchParams(
+        Object.fromEntries(Object.entries(params).filter(([, v]) => v != null))
+      );
+      return request("/strength/sessions" + (q.toString() ? "?" + q : ""));
+    },
+    getSession:    (id) => request(`/strength/sessions/${id}`),
+    createSession: (data) => request("/strength/sessions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    }),
+    updateSession: (id, data) => request(`/strength/sessions/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    }),
+    deleteSession: (id) => request(`/strength/sessions/${id}`, { method: "DELETE" }),
+    getExercises:  (category) => request("/strength/exercises" + (category ? "?category=" + category : "")),
+    createExercise: (data) => request("/strength/exercises", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    }),
+    getExerciseProgress: (id) => request(`/strength/exercises/${id}/progress`),
   };
 })();

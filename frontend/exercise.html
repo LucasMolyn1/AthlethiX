@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AthletiX — Exercice</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">AthletiX</div>
+    <nav>
+      <a href="index.html"><span class="icon">📊</span> Dashboard</a>
+      <a href="history.html"><span class="icon">📋</span> Historique</a>
+      <a href="journal.html"><span class="icon">📝</span> Journal</a>
+      <a href="strength.html"><span class="icon">💪</span> Musculation</a>
+    </nav>
+  </aside>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <div style="display:flex;align-items:center;gap:12px">
+        <a href="strength.html" class="btn btn-ghost" style="padding:6px 12px">← Retour</a>
+        <div>
+          <h1 id="exercise-name">Chargement...</h1>
+          <span id="exercise-category"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Record personnel -->
+    <div class="card" id="pr-box" style="margin-bottom:20px;display:none">
+      <div class="card-title">Record personnel (1RM estimé — formule Epley)</div>
+      <div class="detail-grid">
+        <div class="detail-stat">
+          <div class="label">Meilleur 1RM</div>
+          <div class="value" id="pr-1rm" style="color:var(--green)">—</div>
+        </div>
+        <div class="detail-stat">
+          <div class="label">Date</div>
+          <div class="value" id="pr-date" style="font-size:1.1rem">—</div>
+        </div>
+        <div class="detail-stat">
+          <div class="label">Poids max soulevé</div>
+          <div class="value" id="pr-weight">—</div>
+        </div>
+        <div class="detail-stat">
+          <div class="label">Volume ce jour</div>
+          <div class="value" id="pr-volume" style="font-size:1.1rem">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Courbe de progression -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title">Progression — 1RM estimé (kg)</div>
+      <div class="chart-container" style="height:260px">
+        <canvas id="progress-chart"></canvas>
+      </div>
+    </div>
+
+    <!-- Historique détaillé -->
+    <div class="card">
+      <div class="card-title">Historique</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Poids max (kg)</th>
+              <th>Meilleur 1RM</th>
+              <th>Volume total</th>
+              <th>Séries</th>
+            </tr>
+          </thead>
+          <tbody id="history-body">
+            <tr><td colspan="5" class="loading">Chargement...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div id="toast"></div>
+<script src="js/vendor/chart.min.js"></script>
+<script src="js/api.js"></script>
+<script src="js/exercise.js"></script>
+</body>
+</html>
