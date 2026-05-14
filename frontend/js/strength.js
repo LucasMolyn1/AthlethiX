@@ -4,7 +4,7 @@ const SESSION_TYPES = {
   upper: "Haut du corps", lower: "Bas du corps", cardio: "Cardio", other: "Autre",
 };
 const CAT_COLORS = {
-  push: "#4f8ef7", pull: "#34d399", legs: "#fb923c", core: "#7c5af7", cardio: "#f87171",
+  push: "#E8501A", pull: "#22c55e", legs: "#f59e0b", core: "#8b5cf6", cardio: "#ef4444",
 };
 
 let offset = 0;
@@ -85,7 +85,7 @@ async function loadExercises() {
                font-size:.84rem;color:var(--text);text-decoration:none;transition:background .15s"
         onmouseover="this.style.background='var(--bg)'"
         onmouseout="this.style.background='var(--surface2)'">
-        <span style="width:8px;height:8px;border-radius:50%;background:${CAT_COLORS[e.category] || "#94a3b8"};flex-shrink:0"></span>
+        <span style="width:8px;height:8px;border-radius:50%;background:${CAT_COLORS[e.category] || "#999999"};flex-shrink:0"></span>
         ${e.name}
         ${e.is_custom ? '<span style="font-size:.7rem;color:var(--text-muted)">(custom)</span>' : ""}
       </a>

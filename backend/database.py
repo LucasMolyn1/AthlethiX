@@ -125,6 +125,14 @@ def init_db() -> None:
             );
         """)
 
+        # ── V3 — migration Strava ─────────────────────────────────────────
+        conn.executescript("""
+            CREATE TABLE IF NOT EXISTS settings (
+                key   TEXT PRIMARY KEY,
+                value TEXT NOT NULL
+            );
+        """)
+
         conn.commit()
     finally:
         conn.close()

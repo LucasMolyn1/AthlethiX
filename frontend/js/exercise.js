@@ -4,7 +4,7 @@ const exerciseId = parseInt(params.get("id"));
 if (!exerciseId) location.href = "strength.html";
 
 const CAT_COLORS = {
-  push: "#4f8ef7", pull: "#34d399", legs: "#fb923c", core: "#7c5af7", cardio: "#f87171",
+  push: "#E8501A", pull: "#22c55e", legs: "#f59e0b", core: "#8b5cf6", cardio: "#ef4444",
 };
 
 async function loadProgress() {
@@ -15,7 +15,7 @@ async function loadProgress() {
     document.getElementById("exercise-name").textContent = exercise.name;
 
     const catEl = document.getElementById("exercise-category");
-    const color = CAT_COLORS[exercise.category] || "#94a3b8";
+    const color = CAT_COLORS[exercise.category] || "#999999";
     catEl.textContent = exercise.category;
     catEl.style.cssText = `display:inline-block;background:${color}22;color:${color};
       padding:2px 10px;border-radius:4px;font-size:.75rem;font-weight:700;
@@ -65,11 +65,11 @@ function renderChart(history) {
       datasets: [{
         label: "1RM estimé (kg)",
         data: history.map(h => h.best_1rm),
-        borderColor: "#4f8ef7",
-        backgroundColor: "rgba(79,142,247,.1)",
+        borderColor: "#E8501A",
+        backgroundColor: "rgba(232,80,26,.08)",
         tension: 0.3,
         pointRadius: 4,
-        pointBackgroundColor: "#4f8ef7",
+        pointBackgroundColor: "#E8501A",
         fill: true,
       }],
     },
@@ -79,12 +79,12 @@ function renderChart(history) {
       plugins: { legend: { display: false } },
       scales: {
         x: {
-          ticks: { color: "#94a3b8", maxTicksLimit: 10 },
-          grid:  { color: "#2e3350" },
+          ticks: { color: "#999999", maxTicksLimit: 10 },
+          grid:  { color: "#EEEDE8" },
         },
         y: {
-          ticks: { color: "#94a3b8", callback: v => v + " kg" },
-          grid:  { color: "#2e3350" },
+          ticks: { color: "#999999", callback: v => v + " kg" },
+          grid:  { color: "#EEEDE8" },
         },
       },
     },

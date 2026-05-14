@@ -14,7 +14,7 @@ const ALERT_ICONS = {
 const ALERT_COLORS = {
   danger:  { bg: "rgba(248,113,113,.12)", border: "#f87171" },
   warning: { bg: "rgba(251,146,60,.12)",  border: "#fb923c" },
-  info:    { bg: "rgba(79,142,247,.12)",  border: "#4f8ef7" },
+  info:    { bg: "rgba(14,165,233,.1)",   border: "#0ea5e9" },
   success: { bg: "rgba(52,211,153,.12)",  border: "#34d399" },
 };
 

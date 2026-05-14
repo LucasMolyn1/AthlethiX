@@ -10,14 +10,14 @@
 <div class="layout">
 
   <aside class="sidebar">
-    <div class="sidebar-logo">AthletiX</div>
+    <div class="sidebar-logo">Athleti<span class="logo-x">X</span></div>
     <nav>
-      <a href="index.html"><span class="icon">📊</span> Dashboard</a>
-      <a href="history.html"><span class="icon">📋</span> Historique</a>
-      <a href="journal.html"><span class="icon">📝</span> Journal</a>
-      <a href="strength.html"><span class="icon">💪</span> Musculation</a>
-      <a href="nutrition.html"><span class="icon">🥗</span> Nutrition</a>
-      <a href="compare.html" class="active"><span class="icon">📈</span> Comparaison</a>
+      <a href="index.html"><span class="nav-dot"></span>Dashboard</a>
+      <a href="history.html"><span class="nav-dot"></span>Historique</a>
+      <a href="journal.html"><span class="nav-dot"></span>Journal</a>
+      <a href="strength.html"><span class="nav-dot"></span>Musculation</a>
+      <a href="nutrition.html"><span class="nav-dot"></span>Nutrition</a>
+      <a href="compare.html" class="active"><span class="nav-dot"></span>Comparaison</a>
     </nav>
   </aside>
 
@@ -47,7 +47,7 @@
         <div class="card-title">Sélection des périodes</div>
         <div class="grid-2" style="gap:20px">
           <div>
-            <div style="color:#4f8ef7;font-weight:600;font-size:.85rem;margin-bottom:8px">Période A</div>
+            <div style="color:var(--accent);font-weight:600;font-size:.85rem;margin-bottom:8px">Période A</div>
             <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
               <input type="date" id="a-from"
                 style="background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:7px 10px;border-radius:7px;font-size:.85rem">
@@ -80,7 +80,7 @@
         <div class="card-title">Sélection des exercices</div>
         <div class="grid-2" style="gap:20px">
           <div>
-            <div style="color:#4f8ef7;font-weight:600;font-size:.85rem;margin-bottom:8px">Exercice A</div>
+            <div style="color:var(--accent);font-weight:600;font-size:.85rem;margin-bottom:8px">Exercice A</div>
             <select id="ex-a"
               style="width:100%;background:var(--surface2);border:1px solid var(--border);color:var(--text);padding:9px 12px;border-radius:7px;font-size:.9rem">
               <option value="">— Choisir —</option>

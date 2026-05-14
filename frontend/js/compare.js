@@ -3,7 +3,7 @@ let periodChart  = null;
 let exerciseChart = null;
 
 const CAT_COLORS = {
-  push: "#4f8ef7", pull: "#34d399", legs: "#fb923c", core: "#7c5af7", cardio: "#f87171",
+  push: "#E8501A", pull: "#22c55e", legs: "#f59e0b", core: "#8b5cf6", cardio: "#ef4444",
 };
 
 async function init() {
@@ -96,7 +96,7 @@ function renderPeriodResults(a, b) {
           <thead>
             <tr>
               <th style="width:40%"></th>
-              <th style="text-align:center;color:#4f8ef7">
+              <th style="text-align:center;color:#E8501A">
                 Période A<br>
                 <span style="font-weight:400;text-transform:none;font-size:.78rem">${a.from} → ${a.to}</span>
               </th>
@@ -139,8 +139,8 @@ function renderPeriodChart(a, b, durA, durB) {
         {
           label: `A · ${a.from} → ${a.to}`,
           data: [a.active_days, a.activities.total_count, durA, a.strength.sessions_count],
-          backgroundColor: "rgba(79,142,247,.75)",
-          borderColor: "#4f8ef7",
+          backgroundColor: "rgba(232,80,26,.75)",
+          borderColor: "#E8501A",
           borderWidth: 1,
           borderRadius: 4,
         },
@@ -157,10 +157,10 @@ function renderPeriodChart(a, b, durA, durB) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: "#94a3b8" } } },
+      plugins: { legend: { labels: { color: "#999999" } } },
       scales: {
-        x: { ticks: { color: "#94a3b8" }, grid: { color: "#2e3350" } },
-        y: { ticks: { color: "#94a3b8" }, grid: { color: "#2e3350" }, beginAtZero: true },
+        x: { ticks: { color: "#999999" }, grid: { color: "#EEEDE8" } },
+        y: { ticks: { color: "#999999" }, grid: { color: "#EEEDE8" }, beginAtZero: true },
       },
     },
   });
@@ -185,7 +185,7 @@ async function compareExercises() {
 
 function renderExerciseResults(exA, exB) {
   const card = (ex, color) => {
-    const catColor = CAT_COLORS[ex.exercise.category] || "#94a3b8";
+    const catColor = CAT_COLORS[ex.exercise.category] || "#999999";
     const pr = ex.pr;
     return `
       <div class="card">
@@ -225,8 +225,8 @@ function renderExerciseResults(exA, exB) {
 
   document.getElementById("exercises-results").innerHTML = `
     <div class="grid-2" style="margin-bottom:20px">
-      ${card(exA, "#4f8ef7")}
-      ${card(exB, "#34d399")}
+      ${card(exA, "#E8501A")}
+      ${card(exB, "#22c55e")}
     </div>
     <div class="card">
       <div class="card-title">Progression 1RM comparée (formule Epley)</div>
@@ -265,23 +265,23 @@ function renderExerciseChart(exA, exB) {
         {
           label: exA.exercise.name,
           data: allDates.map(d => mapA[d] ?? null),
-          borderColor: "#4f8ef7",
-          backgroundColor: "rgba(79,142,247,.08)",
+          borderColor: "#E8501A",
+          backgroundColor: "rgba(232,80,26,.07)",
           tension: 0.3,
           spanGaps: true,
           pointRadius: 4,
-          pointBackgroundColor: "#4f8ef7",
+          pointBackgroundColor: "#E8501A",
           fill: true,
         },
         {
           label: exB.exercise.name,
           data: allDates.map(d => mapB[d] ?? null),
-          borderColor: "#34d399",
-          backgroundColor: "rgba(52,211,153,.08)",
+          borderColor: "#22c55e",
+          backgroundColor: "rgba(34,197,94,.07)",
           tension: 0.3,
           spanGaps: true,
           pointRadius: 4,
-          pointBackgroundColor: "#34d399",
+          pointBackgroundColor: "#22c55e",
           fill: true,
         },
       ],
@@ -289,15 +289,15 @@ function renderExerciseChart(exA, exB) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { labels: { color: "#94a3b8" } } },
+      plugins: { legend: { labels: { color: "#999999" } } },
       scales: {
         x: {
-          ticks: { color: "#94a3b8", maxTicksLimit: 10 },
-          grid:  { color: "#2e3350" },
+          ticks: { color: "#999999", maxTicksLimit: 10 },
+          grid:  { color: "#EEEDE8" },
         },
         y: {
-          ticks: { color: "#94a3b8", callback: v => v + " kg" },
-          grid:  { color: "#2e3350" },
+          ticks: { color: "#999999", callback: v => v + " kg" },
+          grid:  { color: "#EEEDE8" },
           beginAtZero: false,
         },
       },

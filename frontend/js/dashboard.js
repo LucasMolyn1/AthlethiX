@@ -86,8 +86,8 @@ async function loadFitnessChart() {
         datasets: [{
           label: "Charge d'entraînement",
           data: data.map(d => Math.round(d.load)),
-          borderColor: "#4f8ef7",
-          backgroundColor: "rgba(79,142,247,.12)",
+          borderColor: "#E8501A",
+          backgroundColor: "rgba(232,80,26,.08)",
           fill: true,
           tension: .4,
           pointRadius: 3,
@@ -99,8 +99,8 @@ async function loadFitnessChart() {
         maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          x: { grid: { color: "#2e3350" }, ticks: { color: "#94a3b8", maxTicksLimit: 8 } },
-          y: { grid: { color: "#2e3350" }, ticks: { color: "#94a3b8" }, beginAtZero: true },
+          x: { grid: { color: "#EEEDE8" }, ticks: { color: "#999999", maxTicksLimit: 8 } },
+          y: { grid: { color: "#EEEDE8" }, ticks: { color: "#999999" }, beginAtZero: true },
         },
       },
     });
@@ -139,7 +139,7 @@ async function triggerSync() {
   btn.disabled = true;
   btn.textContent = "Synchronisation...";
   try {
-    const r = await API.syncGarmin(30);
+    const r = await API.syncStrava(30);
     if (r.error) { toast("Erreur : " + r.error, "err"); }
     else { toast(`+${r.added} activité(s) ajoutée(s)`, "ok"); await loadAll(); }
   } catch (e) {
@@ -147,6 +147,24 @@ async function triggerSync() {
   } finally {
     btn.disabled = false;
     btn.textContent = "Synchroniser";
+  }
+}
+
+// ---- Initialisation bouton sync (état connecté / non connecté) ----
+async function initSyncButton() {
+  const btn = document.getElementById("btn-sync");
+  if (!btn) return;
+  try {
+    const { connected } = await API.stravaStatus();
+    if (connected) {
+      btn.addEventListener("click", triggerSync);
+    } else {
+      btn.textContent = "Connecter Strava";
+      btn.style.background = "#111111";
+      btn.onclick = () => { window.location.href = "/api/strava/auth"; };
+    }
+  } catch (_) {
+    btn.addEventListener("click", triggerSync);
   }
 }
 
@@ -206,5 +224,16 @@ document.addEventListener("DOMContentLoaded", () => {
   loadAll();
   loadFitnessChart();
   loadExtras();
-  document.getElementById("btn-sync")?.addEventListener("click", triggerSync);
+  initSyncButton();
+
+  // Retour depuis le flow OAuth Strava
+  const params = new URLSearchParams(location.search);
+  if (params.get("strava") === "connected") {
+    toast("Strava connecté — tu peux synchroniser !", "ok");
+    history.replaceState({}, "", "/");
+    initSyncButton();
+  } else if (params.get("strava") === "error") {
+    toast("Connexion Strava échouée, réessaie.", "err");
+    history.replaceState({}, "", "/");
+  }
 });

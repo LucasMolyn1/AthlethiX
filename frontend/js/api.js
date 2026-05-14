@@ -48,9 +48,9 @@ const API = (() => {
       body: JSON.stringify(data),
     }),
 
-    // --- Garmin ---
-    testGarmin: () => request("/garmin/test"),
-    syncGarmin: (days = 30) => request("/garmin/sync", {
+    // --- Strava ---
+    stravaStatus: () => request("/strava/status"),
+    syncStrava: (days = 30) => request("/strava/sync", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ days }),

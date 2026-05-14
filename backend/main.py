@@ -11,7 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 from database import init_db
-from routers import garmin, activities, journal, dashboard, strength, nutrition, alerts, compare
+from routers import strava, activities, journal, dashboard, strength, nutrition, alerts, compare
 from services.alert_engine import run_alert_engine
 
 load_dotenv()
@@ -23,7 +23,7 @@ logging.basicConfig(
 
 app = FastAPI(
     title="AthletiX API",
-    description="API de suivi sportif personnel — synchronisation Garmin Connect",
+    description="API de suivi sportif personnel — synchronisation Strava",
     version="0.1.0",
 )
 
@@ -36,7 +36,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(garmin.router)
+app.include_router(strava.router)
 app.include_router(activities.router)
 app.include_router(journal.router)
 app.include_router(dashboard.router)

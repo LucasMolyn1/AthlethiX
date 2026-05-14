@@ -9,11 +9,11 @@ info()  { echo -e "${GREEN}[INFO]${NC}  $*"; }
 warn()  { echo -e "${YELLOW}[WARN]${NC}  $*"; }
 error() { echo -e "${RED}[ERROR]${NC} $*"; exit 1; }
 
-REPO_URL="https://github.com/VOTRE_USERNAME/athletix.git"  # à adapter
+REPO_URL="https://github.com/LucasMolyn1/AthlethiX.git"
 INSTALL_DIR="/opt/athletix"
 WWW_DIR="/var/www/athletix"
 VENV_DIR="$INSTALL_DIR/venv"
-SERVICE_USER="www-data"
+SERVICE_USER="ubuntu"
 
 echo "========================================="
 echo "  Installation AthletiX"
@@ -52,10 +52,10 @@ deactivate
 
 # --- 4. Fichier .env ---
 info "Configuration de l'environnement..."
-if [[ ! -f "$INSTALL_DIR/.env" ]]; then
-    cp "$INSTALL_DIR/.env.example" "$INSTALL_DIR/.env"
+if [[ ! -f "$INSTALL_DIR/backend/.env" ]]; then
+    cp "$INSTALL_DIR/backend/.env.example" "$INSTALL_DIR/backend/.env"
     warn "Fichier .env créé depuis .env.example"
-    warn "IMPORTANT : éditez $INSTALL_DIR/.env avec vos credentials Garmin !"
+    warn "IMPORTANT : éditez $INSTALL_DIR/backend/.env avec vos credentials Garmin !"
 else
     info ".env déjà présent, ignoré."
 fi
@@ -95,7 +95,7 @@ After=network.target
 [Service]
 User=$SERVICE_USER
 WorkingDirectory=$INSTALL_DIR/backend
-EnvironmentFile=$INSTALL_DIR/.env
+EnvironmentFile=$INSTALL_DIR/backend/.env
 ExecStart=$VENV_DIR/bin/uvicorn main:app --host 127.0.0.1 --port 8000
 Restart=on-failure
 RestartSec=5
@@ -124,7 +124,7 @@ echo -e "${GREEN}  Installation terminée !${NC}"
 echo "========================================="
 echo ""
 echo "Prochaines étapes :"
-echo "  1. Éditer $INSTALL_DIR/.env avec vos credentials Garmin"
+echo "  1. Éditer $INSTALL_DIR/backend/.env avec vos credentials Garmin"
 echo "  2. Relancer l'API : systemctl restart athletix"
 echo "  3. Tester la connexion : curl http://localhost/api/garmin/test"
 echo "  4. Lancer une sync manuelle : curl -X POST http://localhost/api/garmin/sync"
